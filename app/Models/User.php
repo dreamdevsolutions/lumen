@@ -30,4 +30,31 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function(User $user) {
+            $user->actions()->create(['action' => Action::created]);
+        });
+
+        static::updated(function(User $user) {
+            $user->actions()->create(['action' => Action::updated]);
+        });
+
+        static::deleted(function(User $user) {
+            $user->actions()->create(['action' => Action::deleted]);
+        });
+    }
+
+    /**
+     * Get all of the user's actions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function actions()
+    {
+        return $this->morphMany(Action::class, 'actionable');
+    }
 }
