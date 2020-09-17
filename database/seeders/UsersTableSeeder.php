@@ -14,6 +14,8 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        User::factory()->count(100)->create();
+        User::withoutEvents(function() {
+            User::factory()->count(100)->create();
+        });
     }
 }
