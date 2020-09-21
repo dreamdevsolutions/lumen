@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ActionEvent;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -36,15 +37,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         parent::boot();
 
         static::created(function(User $user) {
-            $user->actions()->create(['action' => Action::created]);
+            event(new ActionEvent($user, Action::created));
         });
 
         static::updated(function(User $user) {
-            $user->actions()->create(['action' => Action::updated]);
+            event(new ActionEvent($user, Action::updated));
         });
 
         static::deleted(function(User $user) {
-            $user->actions()->create(['action' => Action::deleted]);
+            event(new ActionEvent($user, Action::deleted));
         });
     }
 
